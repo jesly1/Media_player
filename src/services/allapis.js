@@ -43,3 +43,11 @@ export const getallcategories=async()=>{
 export const deleteallcat=async(id)=>{
     return await commonapi('DELETE',`${serverurl}/category/${id}`,{})
 }
+//get video by id
+export const getallvideosbyid=async(id)=>{
+    return await commonapi('GET',`${serverurl}/videos/${id}`,"")
+}
+//update category with dragged videos
+export const updatecat=async(id,body)=>{
+    return await commonapi('PUT',`${serverurl}/category/${id}`,body)
+}

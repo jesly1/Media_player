@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { Link } from 'react-router-dom';
-import { addcategory, deleteallcat, getallcategories } from '../services/allapis';
+import { addcategory, deleteallcat, getallcategories, getallvideosbyid } from '../services/allapis';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -22,7 +22,7 @@ function Category() {
   
       }
       const response=await addcategory(body)
-    if(response.status==201){
+    if(response.status===201){
       toast.success(` Succesfully added Category ${categoryname} `)
       setcategoryname(" ")
       handleClose()
@@ -51,28 +51,50 @@ function Category() {
 await deleteallcat(id)
 getallcat()
  }
+const dragOver=(e)=>{
+  e.preventDefault()
+  console.log("inside category")
+}
+const  videoDrop=async(e,catid)=>{
+  console.log(`dropped inside ${catid}`)
+  const Videoid=e.dataTransfer.getData("VideoiD")
+  console.log(Videoid)
+  const res= await getallvideosbyid(Videoid)
+  console.log("vdo to be droppes",res)
+  const {data} =res
+  console.log(data)
+  let selectedcat=allcategory?.find((item)=>item.id== catid)
+  console.log("selected category")
+  console.log(selectedcat)
+  selectedcat.allVideos.push(data)
+  console.log("final category")
+  console.log(selectedcat)
+  const result=await updatecat(cateid,selcate)
 
+}
   return (
     
     <>
     
     <Link onClick={handleShow} ><button className='btn btn-warning'>Add New Category</button></Link>
+    <div className='ms-3'>
     {
       allcategory?.length>0?
       allcategory.map((item)=>(
-        <div className='ms-3'>
-      <div className='m-5 border border-secondary rounded p-3'>
+       
+      <div className='m-5 border border-secondary rounded p-3' draggable onDragOver={(e)=>dragOver(e)} onDrop={(e)=>videoDrop(e,item?.id)}>
         <div className='d-flex justify-content-center align-items-center'>
           <h6>{item.categoryName}</h6>
           <button className='btn btn-danger ms-2' onClick={()=>handledelte(item.id)}><i class="fa-solid fa-trash"></i></button>
         </div>
       </div>
-    </div>
+    
 
       ))
       :
     <p>No categories to display</p>
     }
+    </div>
    
    
 
